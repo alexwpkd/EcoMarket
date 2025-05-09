@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cliente {
-    private int rut;
+    private int id;
     private String nombre;
     private String correo;
     private String contrasena;
