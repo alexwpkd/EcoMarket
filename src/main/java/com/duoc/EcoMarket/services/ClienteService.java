@@ -25,8 +25,7 @@ public class ClienteService {
     }
 
     public String deleteCliente(int id){
-        clienteRepository.eliminarCliente(id);
-        return "Cliente eliminado";
+        return clienteRepository.eliminarCliente(id);
     }
 
 }

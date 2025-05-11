@@ -39,27 +39,4 @@ public class ClienteRepository {
         return "No se ha encontrado el cliente";
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

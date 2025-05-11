@@ -16,8 +16,21 @@ public class ClienteController {
 
     @GetMapping
     public List<Cliente> listarClientes(){
-        return ClienteService.getClientes()
+        return ClienteService.getClientes();
     }
 
+    @PostMapping
+    public Cliente guardarCliente(@RequestBody Cliente cliente){
+        return ClienteService.guardarCliente(cliente);
+    }
 
+    @GetMapping({"{id}"})
+    public Cliente buscarCliente(@PathVariable int id){
+        return ClienteService.getClienteId(id);
+    }
+
+    @DeleteMapping({"{id}"})
+    public String eliminarLibro(@PathVariable int id){
+        return ClienteService.deleteCliente(id);
+    }
 }
