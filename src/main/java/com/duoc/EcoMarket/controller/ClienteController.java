@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/clientes")
+@RequestMapping("api/v1/cliente")
 public class ClienteController {
 
     @Autowired
@@ -24,13 +24,24 @@ public class ClienteController {
         return ClienteService.guardarCliente(cliente);
     }
 
-    @GetMapping({"{id}"})
-    public Cliente buscarCliente(@PathVariable int id){
-        return ClienteService.getClienteId(id);
+
+    @GetMapping({"{correo}"})
+    public Cliente buscarCliente(@PathVariable String correo){
+        return ClienteService.getClienteCorreo(correo);
     }
 
-    @DeleteMapping({"{id}"})
-    public String eliminarLibro(@PathVariable int id){
-        return ClienteService.deleteCliente(id);
+    @DeleteMapping({"{correo}"})
+    public String eliminarCliente(@PathVariable String correo){
+        return ClienteService.deleteCliente(correo);
+    }
+
+    @PutMapping({"{correo}"})
+    public Cliente actualizarCliente(@PathVariable String correo, @RequestBody Cliente cliente){
+        return ClienteService.updateCliente((cliente));
+    }
+
+    @PostMapping("/login")
+    public Cliente iniciarSesion(@RequestBody Cliente cliente){
+        return ClienteService.inicioSesion(cliente.getCorreo(), cliente.getContrasena());
     }
 }

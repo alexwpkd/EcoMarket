@@ -20,12 +20,19 @@ public class ClienteService {
         return clienteRepository.guardarCliente(cliente);
     }
 
-    public Cliente getClienteId(int id){
-        return clienteRepository.buscarPoriD(id);
+    public Cliente getClienteCorreo(String correo){
+        return clienteRepository.buscarPorCorreo(correo);
     }
 
-    public String deleteCliente(int id){
-        return clienteRepository.eliminarCliente(id);
+    public String deleteCliente(String correo){
+        return clienteRepository.eliminarCliente(correo);
     }
 
+    public Cliente updateCliente(Cliente cliente){
+        return clienteRepository.actualizarCliente(cliente);
+    }
+
+    public Cliente inicioSesion(String correo, String contrasena){
+        return clienteRepository.iniciarSesion(correo, contrasena);
+    }
 }

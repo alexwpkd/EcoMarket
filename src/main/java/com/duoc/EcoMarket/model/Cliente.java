@@ -9,11 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cliente {
-    private int id;
     private String nombre;
     private String correo;
     private String contrasena;
     private int telefono;
     private String direccion;
-
 }
