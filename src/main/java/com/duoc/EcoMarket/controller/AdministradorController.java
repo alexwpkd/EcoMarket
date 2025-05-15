@@ -35,12 +35,12 @@ public class AdministradorController {
     }
 
     @PutMapping({"{correo}"})
-    public Administrador actualizarAdministrador(@PathVariable String correo, @RequestBody Cliente cliente){
-        return ClienteService.updateCliente((cliente));
+    public Administrador actualizarAdministrador(@PathVariable String correo, @RequestBody Administrador ad){
+        return AdminService.updateAdmin((ad));
     }
 
     @PostMapping("/login")
-    public Cliente iniciarSesion(@RequestBody Cliente cliente){
-        return ClienteService.inicioSesion(cliente.getCorreo(), cliente.getContrasena());
+    public Administrador iniciarSesion(@RequestBody Administrador ad){
+        return AdminService.inicioSesion(ad.getCorreo(), ad.getContraseña());
     }
 }
