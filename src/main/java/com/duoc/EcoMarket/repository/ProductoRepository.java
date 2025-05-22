@@ -1,4 +1,17 @@
 package com.duoc.EcoMarket.repository;
 
-public interface ProductoRepositoryy {
+import com.duoc.EcoMarket.model.Producto;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface ProductoRepository extends JpaRepository<Producto, Long> {
+
+    // Buscar productos por nombre que contenga cierto texto (para el buscador)
+    List<Producto> findByNombreContainingIgnoreCase(String nombre);
+
+    // Buscar productos por categoría exacta
+    List<Producto> findByCategoria(String categoria);
 }

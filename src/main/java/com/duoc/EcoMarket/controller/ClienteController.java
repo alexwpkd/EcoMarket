@@ -3,6 +3,7 @@ package com.duoc.EcoMarket.controller;
 import com.duoc.EcoMarket.model.Cliente;
 import com.duoc.EcoMarket.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,36 +13,42 @@ import java.util.List;
 public class ClienteController {
 
     @Autowired
-    private ClienteService ClienteService;
+    private ClienteService clService;
 
     @GetMapping
-    public List<Cliente> listarClientes(){
-        return ClienteService.getClientes();
+    public ResponseEntity<?> obtenerTodos() {
+        List<Cliente> clientes = clService.obtenerTodos();
+        return ResponseEntity.ok(clientes);
     }
 
-    @PostMapping
-    public Cliente guardarCliente(@RequestBody Cliente cliente){
-        return ClienteService.guardarCliente(cliente);
+    // 1. Crear cuenta
+    @PostMapping("/registrar")
+    public ResponseEntity<?> registrarCliente(@RequestBody Cliente cliente) {
+        Cliente nuevoCliente = clService.registrarCliente(cliente);
+        if (nuevoCliente == null) {
+            return ResponseEntity.badRequest().body("El correo ya está registrado.");
+        }
+        return ResponseEntity.ok(nuevoCliente);
     }
 
 
-    @GetMapping({"{correo}"})
-    public Cliente buscarCliente(@PathVariable String correo){
-        return ClienteService.getClienteCorreo(correo);
-    }
-
-    @DeleteMapping({"{correo}"})
-    public String eliminarCliente(@PathVariable String correo){
-        return ClienteService.deleteCliente(correo);
-    }
-
-    @PutMapping({"{correo}"})
-    public Cliente actualizarCliente(@PathVariable String correo, @RequestBody Cliente cliente){
-        return ClienteService.updateCliente((cliente));
-    }
-
+    // 2. Iniciar sesión
     @PostMapping("/login")
-    public Cliente iniciarSesion(@RequestBody Cliente cliente){
-        return ClienteService.inicioSesion(cliente.getCorreo(), cliente.getContrasena());
+    public ResponseEntity<?> iniciarSesion(@RequestBody Cliente datosLogin) {
+        Cliente cliente = clService.iniciarSesion(datosLogin.getCorreo(), datosLogin.getContraseña());
+        if (cliente == null) {
+            return ResponseEntity.status(401).body("Correo o contraseña incorrectos.");
+        }
+        return ResponseEntity.ok(cliente);
+    }
+
+    // 3. Actualizar perfil
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<?> actualizarPerfil(@PathVariable Long id, @RequestBody Cliente datosActualizados) {
+        Cliente clienteActualizado = clService.actualizarPerfil(id, datosActualizados);
+        if (clienteActualizado == null) {
+            return ResponseEntity.badRequest().body("Cliente no encontrado.");
+        }
+        return ResponseEntity.ok(clienteActualizado);
     }
 }
