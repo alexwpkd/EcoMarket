@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class PedidoRepository {
+public class PedidoRepositor {
     private List<Pedido> pedidos = new ArrayList<>();
 
     public Pedido registrarPedido(Pedido p) {
