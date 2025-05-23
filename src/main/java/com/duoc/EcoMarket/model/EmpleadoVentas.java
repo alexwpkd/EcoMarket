@@ -1,18 +1,29 @@
 package com.duoc.EcoMarket.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
+@Entity
+@Table(name = "empleado_ventas")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-
+@AllArgsConstructor
 public class EmpleadoVentas {
 
-    private int id;
-    private String nombre;
-    private String correo;
-    private String contraseña;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    private String nombre;
+
+    private String correo;
+
+    private int telefono;
+
+    // Relación uno a muchos con Venta
+    @OneToMany(mappedBy = "empleadoVentas")
+    private List<Venta> ventas;
 }

@@ -1,38 +1,21 @@
 package com.duoc.EcoMarket.services;
 
 import com.duoc.EcoMarket.model.EmpleadoVentas;
-import com.duoc.EcoMarket.repository.VentasRepository;
+import com.duoc.EcoMarket.repository.EmpleadoVentasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
-public class VentasService {
+public class EmpleadoVentasService {
+
     @Autowired
-    private VentasRepository VtasRepository;
+    private EmpleadoVentasRepository EVR;
 
-    public List<EmpleadoVentas> getEmpleadosVentas() {
-        return VtasRepository.obtenerEmpVentas();
+    public EmpleadoVentas obtenerPorId(Long id) {
+        Optional<EmpleadoVentas> empleado = EVR.findById(id);
+        return empleado.orElse(null);
     }
 
-    public EmpleadoVentas guardarEmpVentas(EmpleadoVentas emp) {
-        return VtasRepository.guardarEmpleadoV(emp);
-    }
-
-    public EmpleadoVentas actualizarEmpVenta(EmpleadoVentas emp) {
-        return VtasRepository.actualizarEmpleado(emp);
-    }
-
-    public EmpleadoVentas buscarEmpVenta(String correo) {
-        return VtasRepository.buscarPorCorreo(correo);
-    }
-
-    public String eliminar(String correo) {
-        return VtasRepository.eliminarEmpleado(correo);
-    }
-
-    public EmpleadoVentas login(String correo, String contrasena) {
-        return VtasRepository.inicioSesion(correo, contrasena);
-    }
 }
