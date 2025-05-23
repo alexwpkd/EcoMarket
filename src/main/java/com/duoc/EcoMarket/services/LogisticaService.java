@@ -1,7 +1,9 @@
 package com.duoc.EcoMarket.services;
 
 import com.duoc.EcoMarket.model.EmpleadoLogistica;
-import com.duoc.EcoMarket.repository.LogisticaRepository;
+import com.duoc.EcoMarket.model.Pedido;
+import com.duoc.EcoMarket.repository.EmpleadoLogisticaRepository;
+import com.duoc.EcoMarket.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,30 +11,55 @@ import java.util.List;
 
 @Service
 public class LogisticaService {
+
     @Autowired
-    private LogisticaRepository LogisticaService;
+    private EmpleadoLogisticaRepository ELR;
 
-    public List<EmpleadoLogistica> getEmpleadosLogistica() {
-        return LogisticaService.obtenerEmpLogistica();
+    @Autowired
+    private PedidoRepository PR;
+
+    // Crear un nuevo empleado de logística
+    public EmpleadoLogistica crearEmpleado(EmpleadoLogistica empleado) {
+        return ELR.save(empleado);
     }
 
-    public EmpleadoLogistica guardar(EmpleadoLogistica emp) {
-        return LogisticaService.guardarEmpleado(emp);
+    // Actualizar datos de un empleado existente
+    public EmpleadoLogistica actualizarEmpleado(Long id, EmpleadoLogistica datosActualizados) {
+        EmpleadoLogistica existente = ELR.findById(id).orElse(null);
+        if (existente != null) {
+            existente.setNombre(datosActualizados.getNombre());
+            existente.setCorreo(datosActualizados.getCorreo());
+            existente.setContraseña(datosActualizados.getContraseña());
+            existente.setTelefono(datosActualizados.getTelefono());
+            return ELR.save(existente);
+        }
+        return null;
     }
 
-    public EmpleadoLogistica actualizar(EmpleadoLogistica emp) {
-        return LogisticaService.actualizarEmpleado(emp);
+    // Obtener todos los pedidos asignados a un empleado
+    public List<Pedido> obtenerPedidosAsignados(Long empleadoId) {
+        EmpleadoLogistica empleado = ELR.findById(empleadoId).orElse(null);
+        return (empleado != null) ? empleado.getPedidos() : null;
     }
 
-    public EmpleadoLogistica buscar(String correo) {
-        return LogisticaService.buscarPorCorreo(correo);
+    // Asignar un pedido a un empleado de logística
+    public Pedido asignarPedido(Long pedidoId, Long empleadoId) {
+        Pedido pedido = PR.findById(pedidoId).orElse(null);
+        EmpleadoLogistica empleado = ELR.findById(empleadoId).orElse(null);
+        if (pedido != null && empleado != null) {
+            pedido.setEmpleadoLogistica(empleado);
+            return PR.save(pedido);
+        }
+        return null;
     }
 
-    public String eliminar(String correo) {
-        return LogisticaService.eliminarEmpleado(correo);
-    }
-
-    public EmpleadoLogistica inicioSesion(String correo, String contrasena) {
-        return LogisticaService.iniciarSesion(correo, contrasena);
+    // Cambiar estado de un pedido
+    public Pedido actualizarEstadoPedido(Long pedidoId, String nuevoEstado) {
+        Pedido pedido = PR.findById(pedidoId).orElse(null);
+        if (pedido != null) {
+            pedido.setEstado(nuevoEstado);
+            return PR.save(pedido);
+        }
+        return null;
     }
 }
