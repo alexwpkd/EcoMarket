@@ -18,12 +18,12 @@ public class LogisticaService {
     @Autowired
     private PedidoRepository PR;
 
-    // Crear un nuevo empleado de logística
+
     public EmpleadoLogistica crearEmpleado(EmpleadoLogistica empleado) {
         return ELR.save(empleado);
     }
 
-    // Actualizar datos de un empleado existente
+
     public EmpleadoLogistica actualizarEmpleado(Long id, EmpleadoLogistica datosActualizados) {
         EmpleadoLogistica existente = ELR.findById(id).orElse(null);
         if (existente != null) {
@@ -36,13 +36,13 @@ public class LogisticaService {
         return null;
     }
 
-    // Obtener todos los pedidos asignados a un empleado
+
     public List<Pedido> obtenerPedidosAsignados(Long empleadoId) {
         EmpleadoLogistica empleado = ELR.findById(empleadoId).orElse(null);
         return (empleado != null) ? empleado.getPedidos() : null;
     }
 
-    // Asignar un pedido a un empleado de logística
+
     public Pedido asignarPedido(Long pedidoId, Long empleadoId) {
         Pedido pedido = PR.findById(pedidoId).orElse(null);
         EmpleadoLogistica empleado = ELR.findById(empleadoId).orElse(null);
@@ -53,7 +53,7 @@ public class LogisticaService {
         return null;
     }
 
-    // Cambiar estado de un pedido
+
     public Pedido actualizarEstadoPedido(Long pedidoId, String nuevoEstado) {
         Pedido pedido = PR.findById(pedidoId).orElse(null);
         if (pedido != null) {

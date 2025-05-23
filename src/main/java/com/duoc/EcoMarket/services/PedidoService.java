@@ -17,32 +17,32 @@ public class PedidoService {
     @Autowired
     private PedidoRepository pedRepository;
 
-    // Crear un nuevo pedido
+
     public Pedido crearPedido(Pedido pedido) {
         return pedRepository.save(pedido);
     }
 
-    // Obtener todos los pedidos
+
     public List<Pedido> obtenerTodos() {
         return pedRepository.findAll();
     }
 
-    // Buscar pedido por ID
+
     public Optional<Pedido> buscarPorId(Long id) {
         return pedRepository.findById(id);
     }
 
-    // Buscar pedidos por cliente
+
     public List<Pedido> buscarPorCliente(Cliente cliente) {
         return pedRepository.findByCliente(cliente);
     }
 
-    // Buscar pedidos por estado
+
     public List<Pedido> buscarPorEstado(String estado) {
         return pedRepository.findByEstado(estado);
     }
 
-    // Actualizar estado de un pedido
+
     public Pedido actualizarEstado(Long id, String nuevoEstado) {
         Optional<Pedido> pedidoOpt = pedRepository.findById(id);
         if (pedidoOpt.isPresent()) {

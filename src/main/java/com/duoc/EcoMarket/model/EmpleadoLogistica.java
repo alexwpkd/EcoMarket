@@ -33,4 +33,9 @@ public class EmpleadoLogistica {
     // Un empleado de logística puede gestionar muchos pedidos
     @OneToMany(mappedBy = "empleadoLogistica", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Pedido> pedidos;
+
+    @ManyToOne
+    @JoinColumn(name = "administrador_id")
+    private Administrador administrador;
+
 }

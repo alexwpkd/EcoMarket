@@ -15,7 +15,6 @@ public class VentaController {
     @Autowired
     private VentaService ventaService;
 
-    // Registrar venta a partir de un pedido y empleado de ventas
     @PostMapping("/registrar")
     public Venta registrarVenta(@RequestParam Long pedidoId, @RequestParam Long empleadoVentasId) {
         Venta venta = ventaService.registrarVenta(pedidoId, empleadoVentasId);
@@ -25,13 +24,12 @@ public class VentaController {
         return venta;
     }
 
-    // Consultar inventario (productos disponibles)
     @GetMapping("/inventario")
     public List<Producto> consultarInventario() {
         return ventaService.consultarInventario();
     }
 
-    // Generar factura básica por venta
+
     @GetMapping("/{ventaId}/factura")
     public String generarFactura(@PathVariable Long ventaId) {
         return ventaService.generarFactura(ventaId);

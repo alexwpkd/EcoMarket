@@ -21,7 +21,7 @@ public class ClienteController {
         return ResponseEntity.ok(clientes);
     }
 
-    // 1. Crear cuenta
+
     @PostMapping("/registrar")
     public ResponseEntity<?> registrarCliente(@RequestBody Cliente cliente) {
         Cliente nuevoCliente = clService.registrarCliente(cliente);
@@ -32,7 +32,6 @@ public class ClienteController {
     }
 
 
-    // 2. Iniciar sesión
     @PostMapping("/login")
     public ResponseEntity<?> iniciarSesion(@RequestBody Cliente datosLogin) {
         Cliente cliente = clService.iniciarSesion(datosLogin.getCorreo(), datosLogin.getContraseña());
@@ -42,7 +41,7 @@ public class ClienteController {
         return ResponseEntity.ok(cliente);
     }
 
-    // 3. Actualizar perfil
+
     @PutMapping("/actualizar/{id}")
     public ResponseEntity<?> actualizarPerfil(@PathVariable Long id, @RequestBody Cliente datosActualizados) {
         Cliente clienteActualizado = clService.actualizarPerfil(id, datosActualizados);

@@ -26,4 +26,9 @@ public class EmpleadoVentas {
     // Relación uno a muchos con Venta
     @OneToMany(mappedBy = "empleadoVentas")
     private List<Venta> ventas;
+
+    @ManyToOne
+    @JoinColumn(name = "administrador_id")
+    private Administrador administrador;
+
 }

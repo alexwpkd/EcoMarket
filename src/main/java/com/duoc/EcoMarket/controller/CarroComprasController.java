@@ -17,13 +17,13 @@ public class CarroComprasController {
     @Autowired
     private ProductoService productoService;
 
-    // Obtener el carrito de un cliente
+
     @GetMapping("/{correoCliente}")
     public CarroCompras obtenerCarrito(@PathVariable String correoCliente) {
         return carritoService.obtener(correoCliente);
     }
 
-    // Agregar un producto al carrito
+
     @PostMapping("/{correoCliente}/agregar/{idProducto}")
     public String agregarProducto(@PathVariable String correoCliente, @PathVariable Long idProducto) {
         Producto producto = productoService.buscarPorId(idProducto).orElse(null);
@@ -34,7 +34,7 @@ public class CarroComprasController {
         return "Producto agregado al carrito";
     }
 
-    // Eliminar un producto del carrito
+
     @DeleteMapping("/{correoCliente}/eliminar/{idProducto}")
     public String eliminarProducto(@PathVariable String correoCliente, @PathVariable Long idProducto) {
         Producto producto = productoService.buscarPorId(idProducto).orElse(null);
@@ -45,14 +45,14 @@ public class CarroComprasController {
         return "Producto eliminado del carrito";
     }
 
-    // Vaciar el carrito
+
     @DeleteMapping("/{correoCliente}/vaciar")
     public String vaciarCarrito(@PathVariable String correoCliente) {
         carritoService.vaciar(correoCliente);
         return "Carrito vaciado";
     }
 
-    // Obtener total del carrito
+
     @GetMapping("/{correoCliente}/total")
     public double total(@PathVariable String correoCliente) {
         return carritoService.total(correoCliente);

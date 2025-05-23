@@ -46,7 +46,6 @@ public class ClienteService {
         cliente.setDireccion(datosActualizados.getDireccion());
         cliente.setTelefono(datosActualizados.getTelefono());
         cliente.setCorreo(datosActualizados.getCorreo());
-        // Puedes manejar la contraseña si decides permitir su cambio
 
         return clRepository.save(cliente);
     }

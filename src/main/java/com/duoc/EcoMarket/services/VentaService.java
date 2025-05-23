@@ -26,7 +26,6 @@ public class VentaService {
     @Autowired
     private EmpleadoVentasRepository EVR;
 
-    // Registrar una venta a partir de un pedido existente
     public Venta registrarVenta(Long pedidoId, Long empleadoVentasId) {
         Optional<Pedido> pedidoOpt = PER.findById(pedidoId);
         Optional<EmpleadoVentas> empleadoOpt = EVR.findById(empleadoVentasId);
@@ -55,12 +54,10 @@ public class VentaService {
         return VR.save(venta);
     }
 
-    // Consultar inventario (productos disponibles)
     public List<Producto> consultarInventario() {
         return POR.findAll();
     }
 
-    // Puedes agregar método para generar factura básica (por ejemplo, un string con datos)
     public String generarFactura(Long ventaId) {
         Optional<Venta> ventaOpt = VR.findById(ventaId);
         if (!ventaOpt.isPresent()) return "Venta no encontrada";

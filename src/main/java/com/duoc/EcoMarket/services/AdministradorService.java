@@ -1,39 +1,86 @@
 package com.duoc.EcoMarket.services;
 
-import com.duoc.EcoMarket.model.Administrador;
+import com.duoc.EcoMarket.model.EmpleadoLogistica;
+import com.duoc.EcoMarket.model.EmpleadoVentas;
 import com.duoc.EcoMarket.repository.AdministradorRepository;
+import com.duoc.EcoMarket.repository.EmpleadoLogisticaRepository;
+import com.duoc.EcoMarket.repository.EmpleadoVentasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
 public class AdministradorService {
 
     @Autowired
-    private AdministradorRepository adminRepository;
+    private AdministradorRepository administradorRepository;
 
-    public List<Administrador> getAdministradors(){
-        return adminRepository.obtenerAdministrador();
+    @Autowired
+    private EmpleadoLogisticaRepository logisticaRepository;
+
+    @Autowired
+    private EmpleadoVentasRepository ventasRepository;
+
+
+    public EmpleadoLogistica crearEmpleadoLogistica(EmpleadoLogistica empleado) {
+        return logisticaRepository.save(empleado);
     }
 
-    public Administrador guardarAdmin(Administrador ad){
-        return adminRepository.guardarAdmin(ad);
+
+    public EmpleadoVentas crearEmpleadoVentas(EmpleadoVentas empleado) {
+        return ventasRepository.save(empleado);
     }
 
-    public Administrador getAdminCorreo(String correo){
-        return adminRepository.buscarPorCorreo(correo);
+
+    public EmpleadoLogistica actualizarEmpleadoLogistica(Long id, EmpleadoLogistica datosActualizados) {
+        EmpleadoLogistica existente = logisticaRepository.findById(id).orElse(null);
+        if (existente != null) {
+            existente.setNombre(datosActualizados.getNombre());
+            existente.setCorreo(datosActualizados.getCorreo());
+            existente.setTelefono(datosActualizados.getTelefono());
+            return logisticaRepository.save(existente);
+        }
+        return null;
     }
 
-    public String deleteAdmin(String correo){
-        return adminRepository.eliminarAdmin(correo);
+
+    public EmpleadoVentas actualizarEmpleadoVentas(Long id, EmpleadoVentas datosActualizados) {
+        EmpleadoVentas existente = ventasRepository.findById(id).orElse(null);
+        if (existente != null) {
+            existente.setNombre(datosActualizados.getNombre());
+            existente.setCorreo(datosActualizados.getCorreo());
+            existente.setTelefono(datosActualizados.getTelefono());
+            return ventasRepository.save(existente);
+        }
+        return null;
     }
 
-    public Administrador updateAdmin(Administrador ad){
-        return adminRepository.actualizarAdmin(ad);
+
+    public boolean eliminarEmpleadoLogistica(Long id) {
+        if (logisticaRepository.existsById(id)) {
+            logisticaRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
-    public Administrador inicioSesion(String correo, String contrasena){
-        return adminRepository.iniciarSesion(correo, contrasena);
+
+    public boolean eliminarEmpleadoVentas(Long id) {
+        if (ventasRepository.existsById(id)) {
+            ventasRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
+
+    public List<EmpleadoLogistica> listarEmpleadosLogistica() {
+        return logisticaRepository.findAll();
+    }
+
+
+    public List<EmpleadoVentas> listarEmpleadosVentas() {
+        return ventasRepository.findAll();
+    }
 }

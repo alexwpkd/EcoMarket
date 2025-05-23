@@ -38,7 +38,7 @@ public class Pedido {
     @Column(nullable = false)
     private String estado;
 
-    // NUEVA RELACIÓN: muchos pedidos pueden estar asignados a un empleado de logística
+    // muchos pedidos pueden estar asignados a un empleado de logística
     @ManyToOne
     @JoinColumn(name = "empleado_logistica_id")
     private EmpleadoLogistica empleadoLogistica;

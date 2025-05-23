@@ -29,7 +29,7 @@ public class CarroCompras {
     @Column(name = "cantidad")
     private Map<Producto, Integer> productos = new HashMap<>();
 
-    // Agregar producto
+
     public void agregarProducto(Producto producto) {
         if (productos.containsKey(producto)) {
             int cantidad = productos.get(producto);
@@ -39,7 +39,7 @@ public class CarroCompras {
         }
     }
 
-    // Eliminar producto
+
     public void eliminarProducto(Producto producto) {
         if (productos.containsKey(producto)) {
             int cantidad = productos.get(producto);
@@ -51,12 +51,12 @@ public class CarroCompras {
         }
     }
 
-    // Vaciar carrito
+
     public void vaciarCarrito() {
         productos.clear();
     }
 
-    // Calcular total
+
     public double calcularTotal() {
         double total = 0.0;
         for (Map.Entry<Producto, Integer> entry : productos.entrySet()) {
