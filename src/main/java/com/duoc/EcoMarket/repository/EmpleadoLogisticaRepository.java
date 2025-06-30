@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EmpleadoLogisticaRepository extends JpaRepository<EmpleadoLogistica, Long> {
 
-    EmpleadoLogistica findByRut(String rut);
+
 }
