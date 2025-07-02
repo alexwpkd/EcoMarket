@@ -83,6 +83,38 @@ class AdministradorTest {
     }
 
     @Test
+    @DisplayName("Actualizar empleado de logística")
+    void testActualizarEmpleadoLogistica() {
+        EmpleadoLogistica existente = logisticaRepository.findByCorreo("original_log@example.com");
+        if (existente != null) {
+            logisticaRepository.delete(existente);
+        }
+        // Crear y guardar un empleado original
+        EmpleadoLogistica empleado = new EmpleadoLogistica();
+        empleado.setNombre("Logística Original");
+        empleado.setCorreo("original_log@example.com");
+        empleado.setTelefono(555111222);
+        empleado.setContraseña("log123");
+        empleado = logisticaRepository.save(empleado);
+
+        // Nuevos datos para actualizar
+        EmpleadoLogistica nuevosDatos = new EmpleadoLogistica();
+        nuevosDatos.setNombre("Logística Actualizado");
+        nuevosDatos.setCorreo("original_log@example.com"); // mismo correo
+        nuevosDatos.setTelefono(999888777);
+        nuevosDatos.setContraseña("log123"); // se mantiene la contraseña
+
+        // Ejecutar actualización
+        AdministradorService servicio = new AdministradorService(logisticaRepository, ventasRepository);
+        EmpleadoLogistica actualizado = servicio.actualizarEmpleadoLogistica(empleado.getId(), nuevosDatos);
+
+        // Verificar cambios
+        assertNotNull(actualizado);
+        assertEquals("Logística Actualizado", actualizado.getNombre());
+        assertEquals(999888777, actualizado.getTelefono());
+    }
+
+    @Test
     @DisplayName("Test Controller - Obtener empleados de logística")
     void testControllerObtenerLogistica() {
         EmpleadoLogistica e1 = new EmpleadoLogistica();
