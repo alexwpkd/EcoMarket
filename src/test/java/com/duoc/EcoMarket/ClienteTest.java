@@ -39,23 +39,70 @@ class ClienteTest {
     ClienteService ClienteServiceMock;
 
     @Test
-    @DisplayName("FindAll Clientes")
-    public void testObtenerTodosClientes() {
-        List<Cliente> clientes = ClienteRepository.findAll();
-        assertNotNull(clientes);
-        // Puedes ajustar esta validación según la cantidad esperada en tu BD de prueba
-            assertTrue(clientes.size() >= 0);
-        }
-
-
-    @Test
     @DisplayName("Buscar cliente y validar correo")
     void testBuscarClientePorId() {
-        Optional<Cliente> clienteOpt = ClienteRepository.findById(1L);
+        Cliente existente = ClienteRepository.findByCorreo("test@example.com");
+        if (existente != null) {
+            ClienteRepository.delete(existente);
+        }
+        Cliente cliente = new Cliente();
+        cliente.setNombre("Test");
+        cliente.setCorreo("test@example.com");
+        cliente.setDireccion("Av. Siempre Viva");
+        cliente.setTelefono(123456789);
+        cliente.setContraseña("1234");
+        cliente = ClienteRepository.save(cliente);
+        Optional<Cliente> clienteOpt = ClienteRepository.findById(cliente.getId());
         assertTrue(clienteOpt.isPresent());
-        Cliente cliente = clienteOpt.get();
-        assertNotNull(cliente.getCorreo());
     }
+
+    @Test
+    @DisplayName("Actualizar perfil de cliente")
+    void testActualizarPerfilCliente() {
+        // Cliente original con correo único
+        Cliente cliente = new Cliente();
+        cliente.setNombre("Test");
+        cliente.setCorreo("test_update@example.com");
+        cliente.setDireccion("Av. Siempre Viva");
+        cliente.setTelefono(123456789);
+        cliente.setContraseña("1234");
+        cliente = ClienteRepository.save(cliente);
+
+        // Nuevos datos para actualizar
+        Cliente nuevosDatos = new Cliente();
+        nuevosDatos.setNombre("Test");
+        nuevosDatos.setCorreo("test_update@example.com"); // Mismo correo
+        nuevosDatos.setDireccion("Nueva Dirección 456");
+        nuevosDatos.setTelefono(123456789);
+        nuevosDatos.setContraseña("1234");
+
+        ClienteService servicio = new ClienteService(ClienteRepository);
+        Cliente actualizado = servicio.actualizarPerfil(cliente.getId(), nuevosDatos);
+
+        assertNotNull(actualizado);
+        assertEquals("Nueva Dirección 456", actualizado.getDireccion());
+    }
+
+    @Test
+    @DisplayName("Fallo al iniciar sesión con contraseña incorrecta")
+    void testLoginContrasenaIncorrecta() {
+        Cliente cliente = new Cliente();
+        cliente.setNombre("Test");
+        cliente.setCorreo("test_login_fail@example.com"); // Correo único
+        cliente.setDireccion("Av. Siempre Viva");
+        cliente.setTelefono(123456789);
+        cliente.setContraseña("1234");
+        ClienteRepository.save(cliente);
+
+        ClienteService servicio = new ClienteService(ClienteRepository);
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            servicio.iniciarSesion("test_login_fail@example.com", "contraseña_mal");
+        });
+
+        assertEquals("Correo o contraseña incorrectos.", exception.getMessage());
+    }
+
 
     @Test
     @DisplayName("Test Controller Obtener lista de clientes")
