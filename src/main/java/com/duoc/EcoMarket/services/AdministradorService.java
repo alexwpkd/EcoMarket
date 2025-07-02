@@ -12,11 +12,14 @@ import java.util.List;
 @Service
 public class AdministradorService {
 
-    @Autowired
-    private EmpleadoLogisticaRepository logisticaRepository;
+    private final EmpleadoLogisticaRepository logisticaRepository;
+    private final EmpleadoVentasRepository ventasRepository;
 
     @Autowired
-    private EmpleadoVentasRepository ventasRepository;
+    public AdministradorService(EmpleadoLogisticaRepository logisticaRepository, EmpleadoVentasRepository ventasRepository) {
+        this.logisticaRepository = logisticaRepository;
+        this.ventasRepository = ventasRepository;
+    }
 
 
     public EmpleadoLogistica crearEmpleadoLogistica(EmpleadoLogistica empleado) {

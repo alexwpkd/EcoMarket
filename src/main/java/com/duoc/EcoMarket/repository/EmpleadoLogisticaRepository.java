@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface EmpleadoLogisticaRepository extends JpaRepository<EmpleadoLogistica, Long> {
 
 
+    EmpleadoLogistica findByCorreo(String mail);
 }
