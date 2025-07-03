@@ -6,6 +6,8 @@ import com.duoc.EcoMarket.services.CarroComprasService;
 import com.duoc.EcoMarket.services.ProductoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +23,20 @@ public class CarroComprasController {
     private ProductoService productoService;
 
     @Operation(summary = "Obtener el carrito por correo del cliente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Carrito obtenido"),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
     @GetMapping("/{correoCliente}")
     public CarroCompras obtenerCarrito(@PathVariable String correoCliente) {
         return carritoService.obtener(correoCliente);
     }
 
     @Operation(summary = "Agregar producto al carrito")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Producto agregado"),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado")
+    })
     @PostMapping("/{correoCliente}/agregar/{idProducto}")
     public String agregarProducto(@PathVariable String correoCliente, @PathVariable Long idProducto) {
         Producto producto = productoService.buscarPorId(idProducto).orElse(null);
@@ -38,6 +48,10 @@ public class CarroComprasController {
     }
 
     @Operation(summary = "Eliminar producto del carrito")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Producto eliminado"),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado")
+    })
     @DeleteMapping("/{correoCliente}/eliminar/{idProducto}")
     public String eliminarProducto(@PathVariable String correoCliente, @PathVariable Long idProducto) {
         Producto producto = productoService.buscarPorId(idProducto).orElse(null);
@@ -49,6 +63,9 @@ public class CarroComprasController {
     }
 
     @Operation(summary = "Vaciar el carrito del cliente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Carrito vaciado")
+    })
     @DeleteMapping("/{correoCliente}/vaciar")
     public String vaciarCarrito(@PathVariable String correoCliente) {
         carritoService.vaciar(correoCliente);
@@ -56,6 +73,9 @@ public class CarroComprasController {
     }
 
     @Operation(summary = "Calcular total del carrito")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Total calculado")
+    })
     @GetMapping("/{correoCliente}/total")
     public double total(@PathVariable String correoCliente) {
         return carritoService.total(correoCliente);
