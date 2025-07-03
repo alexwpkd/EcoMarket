@@ -69,4 +69,13 @@ public class LogisticaService {
         }
         return null;
     }
+
+    public List<EmpleadoLogistica> obtenerTodos() {
+        return ELR.findAll();
+    }
+
+    public EmpleadoLogistica obtenerPorId(Long id) {
+        return ELR.findById(id).orElse(null);
+    }
+
 }
