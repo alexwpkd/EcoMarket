@@ -23,6 +23,8 @@ public class EmpleadoVentas {
 
     private int telefono;
 
+    private String contraseña;
+
     // Relación uno a muchos con Venta
     @OneToMany(mappedBy = "empleadoVentas")
     private List<Venta> ventas;
