@@ -5,6 +5,8 @@ import com.duoc.EcoMarket.model.Cliente;
 import com.duoc.EcoMarket.services.PedidoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,10 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @Operation(summary = "Crear nuevo pedido")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Pedido creado"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+    })
     @PostMapping("/crear")
     public ResponseEntity<?> crearPedido(@RequestBody Pedido pedido) {
         Pedido nuevo = pedidoService.crearPedido(pedido);
@@ -27,12 +33,19 @@ public class PedidoController {
     }
 
     @Operation(summary = "Listar todos los pedidos")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Listado de pedidos")
+    })
     @GetMapping("/listar")
     public ResponseEntity<?> listarPedidos() {
         return ResponseEntity.ok(pedidoService.obtenerTodos());
     }
 
     @Operation(summary = "Obtener pedido por ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Pedido encontrado"),
+            @ApiResponse(responseCode = "404", description = "Pedido no encontrado")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         Pedido pedido = pedidoService.buscarPorId(id).orElse(null);
@@ -43,12 +56,18 @@ public class PedidoController {
     }
 
     @Operation(summary = "Buscar pedidos por estado")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Pedidos encontrados")
+    })
     @GetMapping("/estado/{estado}")
     public ResponseEntity<?> buscarPorEstado(@PathVariable String estado) {
         return ResponseEntity.ok(pedidoService.buscarPorEstado(estado));
     }
 
     @Operation(summary = "Buscar pedidos por ID de cliente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Pedidos encontrados")
+    })
     @GetMapping("/cliente/{clienteId}")
     public ResponseEntity<?> buscarPorCliente(@PathVariable Long clienteId) {
         Cliente cliente = new Cliente();
@@ -57,6 +76,10 @@ public class PedidoController {
     }
 
     @Operation(summary = "Actualizar estado de un pedido")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Estado actualizado"),
+            @ApiResponse(responseCode = "404", description = "Pedido no encontrado")
+    })
     @PutMapping("/{id}/estado")
     public ResponseEntity<?> actualizarEstado(@PathVariable Long id, @RequestBody String nuevoEstado) {
         Pedido actualizado = pedidoService.actualizarEstado(id, nuevoEstado);
