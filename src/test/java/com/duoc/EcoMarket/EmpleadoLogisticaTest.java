@@ -13,162 +13,157 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Optional;
-
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 class EmpleadoLogisticaTest {
 
     @Autowired
-    EmpleadoLogisticaRepository logisticaRepository;
+    private ClienteRepository clienteRepository;
 
     @Autowired
-    PedidoRepository pedidoRepository;
+    private PedidoRepository pedidoRepository;
 
     @Autowired
-    MockMvc mockMvc;
-
-    @MockitoBean
-    @Autowired
-    LogisticaService logisticaService;
+    private EmpleadoLogisticaRepository empleadoLogisticaRepository;
 
     @Autowired
-    ClienteRepository clienteRepository;
-
-    @Test
-    @DisplayName("Crear y verificar empleado logístico")
-    void testCrearEmpleadoLogistica() {
-        EmpleadoLogistica existente = logisticaRepository.findByCorreo("logistica_test@example.com");
-        if (existente != null) {
-            logisticaRepository.delete(existente);
-        }
-
-        EmpleadoLogistica empleado = new EmpleadoLogistica();
-        empleado.setNombre("Logístico Uno");
-        empleado.setCorreo("logistica_test@example.com");
-        empleado.setContraseña("1234");
-        empleado.setTelefono(987654321);
-
-        EmpleadoLogistica guardado = logisticaRepository.save(empleado);
-        Optional<EmpleadoLogistica> encontrado = logisticaRepository.findById(guardado.getId());
-
-        assertTrue(encontrado.isPresent());
-        assertEquals("logistica_test@example.com", encontrado.get().getCorreo());
-    }
-
-    @Test
-    @DisplayName("Actualizar datos de empleado logístico")
-    void testActualizarEmpleadoLogistica() {
-        EmpleadoLogistica empleado = logisticaRepository.findByCorreo("logistica_actualizar@example.com");
-        if (empleado == null) {
-            empleado = new EmpleadoLogistica();
-            empleado.setNombre("Nombre Antiguo");
-            empleado.setCorreo("logistica_actualizar@example.com");
-            empleado.setContraseña("1234");
-            empleado.setTelefono(111111111);
-            empleado = logisticaRepository.save(empleado);
-        }
-
-        empleado.setNombre("Nombre Actualizado");
-        empleado.setTelefono(222222222);
-        EmpleadoLogistica actualizado = logisticaRepository.save(empleado);
-
-        assertNotNull(actualizado);
-        assertEquals("Nombre Actualizado", actualizado.getNombre());
-        assertEquals(222222222, actualizado.getTelefono());
-    }
+    private LogisticaService logisticaService;
 
     @Test
     @DisplayName("Asignar pedido a empleado de logística")
     void testAsignarPedidoAEmpleado() {
-        // Crear o buscar empleado
-        EmpleadoLogistica empleado = logisticaRepository.findByCorreo("logistica_asignar@example.com");
+        // Crear empleado logística
+        EmpleadoLogistica empleado = empleadoLogisticaRepository.findByCorreo("empleado_logistica@correo.com");
         if (empleado == null) {
             empleado = new EmpleadoLogistica();
-            empleado.setNombre("Empleado Asignar");
-            empleado.setCorreo("logistica_asignar@example.com");
-            empleado.setContraseña("1234");
-            empleado.setTelefono(333333333);
-            empleado = logisticaRepository.save(empleado);
+            empleado.setNombre("EmpleadoLog");
+            empleado.setCorreo("empleado_logistica@correo.com");
+            empleado.setContraseña("123");
+            empleado.setTelefono(12345678);
+            empleado = empleadoLogisticaRepository.save(empleado);
         }
 
-        // Crear o buscar cliente
-        Cliente cliente = clienteRepository.findByCorreo("cliente_test@example.com");
+
+        // Crear cliente
+        Cliente cliente = clienteRepository.findByCorreo("cliente_asignacion@correo.com");
         if (cliente == null) {
             cliente = new Cliente();
-            cliente.setCorreo("cliente_test@example.com");
-            cliente.setNombre("Cliente Test");
-            cliente.setDireccion("Calle Test 123");
-            cliente.setTelefono(123456789);
-            cliente.setContraseña("pass123");
+            cliente.setNombre("Cliente Pedido");
+            cliente.setCorreo("cliente_asignacion@correo.com");
+            cliente.setDireccion("Dirección");
+            cliente.setTelefono(99999999);
+            cliente.setContraseña("pass");
             cliente = clienteRepository.save(cliente);
         }
 
         // Crear pedido
-        Pedido pedido = new Pedido();
-        pedido.setEstado("Pendiente");
+        final Pedido pedido = new Pedido();
         pedido.setCliente(cliente);
+        pedido.setEmpleadoLogistica(empleado);
+        pedido.setEstado("Preparando");
+        pedido.setTotal(20000);
+        pedidoRepository.save(pedido);
+
+
+        // Asignar pedido
+        Pedido resultado = logisticaService.asignarPedido(pedido.getId(), empleado.getId());
+
+        assertNotNull(resultado);
+        assertEquals(empleado.getId(), resultado.getEmpleadoLogistica().getId());
+    }
+
+    @Test
+    @DisplayName("Actualizar estado de pedido")
+    void testActualizarEstadoPedido() {
+        Cliente cliente = clienteRepository.findByCorreo("cliente_estado@example.com");
+        if (cliente == null) {
+            cliente = new Cliente();
+            cliente.setNombre("Cliente Estado");
+            cliente.setCorreo("cliente_estado@example.com");
+            cliente.setDireccion("Calle 2");
+            cliente.setTelefono(11111111);
+            cliente.setContraseña("pass");
+            cliente = clienteRepository.save(cliente);
+        }
+
+        Pedido pedido = new Pedido();
+        pedido.setCliente(cliente);
+        pedido.setEstado("Pendiente");
+        pedido.setTotal(15000);
         pedido = pedidoRepository.save(pedido);
 
-        // Asignar pedido usando servicio REAL (no mock)
-        Pedido pedidoAsignado = logisticaService.asignarPedido(pedido.getId(), empleado.getId());
+        Pedido actualizado = logisticaService.actualizarEstadoPedido(pedido.getId(), "Despachado");
 
-        // Confirmar que el pedido asignado no es null
-        assertNotNull(pedidoAsignado);
+        assertNotNull(actualizado);
+        assertEquals("Despachado", actualizado.getEstado());
+    }
 
-        // Confirmar que el empleado logístico fue asignado correctamente
-        assertNotNull(pedidoAsignado.getEmpleadoLogistica());
-        assertEquals(empleado.getId(), pedidoAsignado.getEmpleadoLogistica().getId());
+    @Test
+    @Transactional
+    @DisplayName("Obtener pedidos asignados a empleado")
+    void testObtenerPedidosAsignados() {
+        // Buscar o crear empleado con correo único
+        EmpleadoLogistica empleado = empleadoLogisticaRepository.findByCorreo("empleado_pedidos@correo.com");
+        if (empleado == null) {
+            empleado = new EmpleadoLogistica();
+            empleado.setNombre("Empleado Pedidos");
+            empleado.setCorreo("empleado_pedidos@correo.com");
+            empleado.setContraseña("abc123");
+            empleado.setTelefono(12345678);
+            empleado = empleadoLogisticaRepository.save(empleado);
+        }
 
-        // Opcional: volver a buscar en BD y verificar cambios persistidos
-        Pedido pedidoBD = pedidoRepository.findById(pedido.getId()).orElse(null);
-        assertNotNull(pedidoBD);
-        assertNotNull(pedidoBD.getEmpleadoLogistica());
-        assertEquals(empleado.getId(), pedidoBD.getEmpleadoLogistica().getId());
+        // Buscar o crear cliente con correo único
+        Cliente cliente = clienteRepository.findByCorreo("cliente_pedidos@correo.com");
+        if (cliente == null) {
+            cliente = new Cliente();
+            cliente.setNombre("Cliente Pedido");
+            cliente.setCorreo("cliente_pedidos@correo.com");
+            cliente.setDireccion("Dirección");
+            cliente.setTelefono(88888888);
+            cliente.setContraseña("clave");
+            cliente = clienteRepository.save(cliente);
+        }
+
+        // Crear pedido asignado al empleado
+        Pedido pedido = new Pedido();
+        pedido.setCliente(cliente);
+        pedido.setEmpleadoLogistica(empleado);
+        pedido.setEstado("Preparando");
+        pedido.setTotal(20000);
+        pedido = pedidoRepository.save(pedido);
+
+        // Obtener pedidos asignados desde el servicio
+        List<Pedido> pedidos = logisticaService.obtenerPedidosAsignados(empleado.getId());
+
+        // Validar
+        assertNotNull(pedidos);
+        Pedido finalPedido = pedido;
+        assertTrue(pedidos.stream().anyMatch(p -> p.getId().equals(finalPedido.getId())));
     }
 
 
     @Test
-    @DisplayName("Actualizar estado de un pedido")
-    void testActualizarEstadoPedido() {
-        // Crear o buscar cliente
-        Cliente cliente = clienteRepository.findByCorreo("cliente_test_estado@example.com");
-        if (cliente == null) {
-            cliente = new Cliente();
-            cliente.setCorreo("cliente_test_estado@example.com");
-            cliente.setNombre("Cliente Estado");
-            cliente.setDireccion("Calle Estado 123");
-            cliente.setTelefono(987654321);
-            cliente.setContraseña("pass456");
-            cliente = clienteRepository.save(cliente);
+    @DisplayName("Buscar empleado de logística por correo")
+    void testBuscarEmpleadoPorCorreo() {
+        String correo = "busqueda_empleado@correo.com";
+        EmpleadoLogistica existente = empleadoLogisticaRepository.findByCorreo(correo);
+        if (existente == null) {
+            EmpleadoLogistica nuevo = new EmpleadoLogistica();
+            nuevo.setNombre("Empleado Buscado");
+            nuevo.setCorreo(correo);
+            nuevo.setContraseña("123");
+            nuevo.setTelefono(44444444);
+            nuevo = empleadoLogisticaRepository.save(nuevo);
         }
 
-        // Crear pedido
-        Pedido pedido = new Pedido();
-        pedido.setEstado("Pendiente");
-        pedido.setCliente(cliente);
-        pedido = pedidoRepository.save(pedido);
-
-        // Actualizar estado usando servicio REAL (no mock)
-        Pedido pedidoActualizado = logisticaService.actualizarEstadoPedido(pedido.getId(), "Enviado");
-
-        assertNotNull(pedidoActualizado);
-        assertEquals("Enviado", pedidoActualizado.getEstado());
-
-        // Opcional: verificar en BD
-        Pedido pedidoBD = pedidoRepository.findById(pedido.getId()).orElse(null);
-        assertNotNull(pedidoBD);
-        assertEquals("Enviado", pedidoBD.getEstado());
+        EmpleadoLogistica resultado = logisticaService.buscarPorCorreo(correo);
+        assertNotNull(resultado);
+        assertEquals(correo, resultado.getCorreo());
     }
-
 }

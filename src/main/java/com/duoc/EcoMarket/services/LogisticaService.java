@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 public class LogisticaService {
@@ -21,6 +23,10 @@ public class LogisticaService {
 
     public EmpleadoLogistica crearEmpleado(EmpleadoLogistica empleado) {
         return ELR.save(empleado);
+    }
+
+    public EmpleadoLogistica buscarPorCorreo(String correo) {
+        return ELR.findByCorreo(correo);
     }
 
 
@@ -37,6 +43,7 @@ public class LogisticaService {
     }
 
 
+    @Transactional
     public List<Pedido> obtenerPedidosAsignados(Long empleadoId) {
         EmpleadoLogistica empleado = ELR.findById(empleadoId).orElse(null);
         return (empleado != null) ? empleado.getPedidos() : null;
